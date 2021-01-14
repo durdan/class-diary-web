@@ -3,6 +3,8 @@ package com.dd.classdiary.controller;
 
 import com.dd.classdiary.model.Student;
 import com.dd.classdiary.service.TeacherService;
+import com.dd.classdiary.service.dto.UserDTO;
+import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ public class DashboardController {
 
         model.addAttribute("name", name);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "/dashboard";
     }
     @GetMapping("/teacherDashboard")
@@ -41,6 +44,7 @@ public class DashboardController {
         model.addAttribute("studentList",studentList);
         model.addAttribute("name", name);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "/teacherDashboard";
     }
     private String getUsername() {
@@ -48,7 +52,11 @@ public class DashboardController {
         return user.getUsername();
     }
 
-
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
+    }
 
     private Authentication getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

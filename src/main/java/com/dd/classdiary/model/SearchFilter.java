@@ -5,9 +5,9 @@ public class SearchFilter {
     Long filterId;
     String startDate;
     String endDate;
-    boolean payment;
-    boolean confirmed;
-    boolean rescheduled;
+    Boolean payment;
+    Boolean confirmed;
+    Boolean rescheduled;
 
     public Long getFilterId() {
         return filterId;
@@ -33,27 +33,27 @@ public class SearchFilter {
         this.endDate = endDate;
     }
 
-    public boolean isPayment() {
+    public Boolean getPayment() {
         return payment;
     }
 
-    public void setPayment(boolean payment) {
+    public void setPayment(Boolean payment) {
         this.payment = payment;
     }
 
-    public boolean isConfirmed() {
+    public Boolean getConfirmed() {
         return confirmed;
     }
 
-    public void setConfirmed(boolean confirmed) {
+    public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
     }
 
-    public boolean isRescheduled() {
+    public Boolean getRescheduled() {
         return rescheduled;
     }
 
-    public void setRescheduled(boolean rescheduled) {
+    public void setRescheduled(Boolean rescheduled) {
         this.rescheduled = rescheduled;
     }
 

@@ -706,15 +706,15 @@ demo = {
   showSwal: function(type) {
     if (type == 'basic') {
       swal({
-        title: "Here's a message!",
+        title: "Coming soon",
         buttonsStyling: false,
         confirmButtonClass: "btn btn-success"
       }).catch(swal.noop)
 
     } else if (type == 'title-and-text') {
       swal({
-        title: "Here's a message!",
-        text: "It's pretty, isn't it?",
+        title: "Social Sign-up coming soon..",
+        text: "Please fill the sign-up form ",
         buttonsStyling: false,
         confirmButtonClass: "btn btn-info"
       }).catch(swal.noop)

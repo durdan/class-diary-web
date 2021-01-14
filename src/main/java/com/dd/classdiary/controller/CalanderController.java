@@ -1,6 +1,8 @@
 package com.dd.classdiary.controller;
 
 
+import com.dd.classdiary.service.dto.UserDTO;
+import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ public class CalanderController {
 
         model.addAttribute("name", name);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "/calendar";
     }
     private String getUsername() {
@@ -36,5 +39,10 @@ public class CalanderController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assert(authentication.isAuthenticated());
         return authentication;
+    }
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
     }
 }

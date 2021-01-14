@@ -15,10 +15,10 @@ The above copyright notice and this permission notice shall be included in all c
 <head>
   <meta charset="utf-8" />
   <link rel="apple-touch-icon" sizes="76x76" href="../../assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+  <link rel="icon" type="image/png" href="../../assets/img/favicon/favicon.ico">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>
-
+    Class Planner - Manage Your All Classes in one place
   </title>
   <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <!--     Fonts and icons     -->
@@ -44,6 +44,7 @@ The above copyright notice and this permission notice shall be included in all c
       <!-- End Navbar -->
       <div th:fragment="classschedulelist" class="content">
         <div class="container-fluid">
+
           <div class="row">
             <div class="col-md-12">
               <div class="card">
@@ -51,7 +52,7 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="card-icon">
                     <i class="material-icons">filter_alt</i>
                   </div>
-                  <h4 class="card-title">Choose Student to get Schedule </h4>
+                  <h4 class="card-title">Search using filters</h4>
                 </div>
                 <div class="card-body">
 
@@ -192,10 +193,26 @@ The above copyright notice and this permission notice shall be included in all c
                         <td  th:text="${#objects.nullSafe(classSchedule?.teacher?.firstName,'')}" />
                         <td  th:text="${#objects.nullSafe(classSchedule?.student?.firstName,'')}" />
                         <td   th:text="${classSchedule.course.name}" />
-                        <td   th:text="${classSchedule.schedule}" />
-                        <td   th:text="${classSchedule.payment}" />
-                        <td   th:text="${classSchedule.confirmed}" />
-                        <td   th:text="${classSchedule.rescheduled}" />
+                        <td   th:text="${classSchedule.schedule}"/>
+
+                        <td th:style="${classSchedule.payment} == FALSE ? 'background: #e91e62' : 'background: #4baf4f'">
+                        <span th:if="${classSchedule.payment}">
+                                         Yes
+                        </span>
+                        <span th:if="${!classSchedule.payment}">
+                                NO
+                         </span>
+                        </td>
+
+                        <td th:style="${classSchedule.confirmed} == FALSE ? 'background: #e91e62' : 'background: #4baf4f'">
+                        <span bgcolor="green" th:if="${classSchedule.confirmed}">Yes</span>
+                          <span th:if="${!classSchedule.confirmed}">NO</span>
+                        </td>
+                        <td  th:style="${classSchedule.rescheduled} == TRUE ? 'background: #e91e62' : 'background: white'">
+                        <span th:if="${classSchedule.rescheduled}">Yes</span>
+                        <span th:if="${!classSchedule.rescheduled}">NO</span>
+
+                        </td>
                         <td class="td-actions text-right">
                           <button type="button" rel="tooltip" class="btn btn-info">
                             <a th:href="@{/class-schedule/{id}(id=${classSchedule.id})}" />
@@ -206,10 +223,7 @@ The above copyright notice and this permission notice shall be included in all c
                             <a th:href="@{/class-schedule/update/{id}(id=${classSchedule.id})}" />
                             <i class="material-icons">edit</i>
                           </button>
-                          <button type="button" rel="tooltip" class="btn btn-danger">
-                            <a href="#"/>
-                            <i class="material-icons">close</i>
-                          </button>
+
                         </td>
                       </tr>
                       </tbody>
@@ -449,6 +463,13 @@ The above copyright notice and this permission notice shall be included in all c
   </script>
   <script>
     $(document).ready(function() {
+
+
+       // var message =/*[[${userType}]]*/ 'defaultanyvalue';
+        var message = "[[${loggedinUserName}]]" + " on " + new Date();
+        console.log(message);
+
+
       $('#datatables').DataTable({
         "pagingType": "full_numbers",
         "lengthMenu": [
@@ -456,7 +477,25 @@ The above copyright notice and this permission notice shall be included in all c
           [10, 25, 50, "All"]
         ],dom: 'Bfrtip',
           buttons: [
-              'copy','excel', 'pdf'
+              {
+                  extend: 'pdf',
+                  text: 'Export PDF',
+                  title: " ClassSchedule ",
+                  messageTop: " Manage your Classes with www.classplanner.co.uk ",
+                  messageBottom: "Report By "+message,
+                  className: 'btn btn-info btn-sm',
+                  exportOptions: {
+                      columns: [ 0, 1, 2, 3,4,5,6,7 ]
+                  },
+
+
+              },
+              {
+                  extend: 'copy',
+                  text: 'Copy',
+                  className: 'btn btn-rose btn-sm',exportOptions: {
+                      columns: [0, 1, 2, 3,4,5,6,7  ]
+                  }}
           ],
         responsive: true,
         language: {

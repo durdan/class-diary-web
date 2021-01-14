@@ -3,6 +3,8 @@ package com.dd.classdiary.controller;
 import com.dd.classdiary.model.*;
 import com.dd.classdiary.service.StudentService;
 import com.dd.classdiary.service.TeacherService;
+import com.dd.classdiary.service.dto.UserDTO;
+import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +35,26 @@ public class TeacherController {
     public String getClassForm( Model model) {
         model.addAttribute("userForm", new UserForm());
         model.addAttribute("username",getUsername());
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        model.addAttribute("userType",userExtraDTO.getUserType());
         return "addclass";
     }
 
-    @GetMapping("/create-student")
+    @GetMapping("/createstudent")
     public String getStudentForm( Model model) {
         if(model.getAttribute("studentForm")!=null){
             StudentForm studentForm = (StudentForm) model.getAttribute("studentForm");
-            log.info("Update Request {}",studentForm.getEmail());
+            log.info("Create Student Request {}",studentForm.getEmail());
             model.addAttribute("studentForm", studentForm);
         }else{
             model.addAttribute("studentForm", new StudentForm());
         }
-
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        model.addAttribute("userType",userExtraDTO.getUserType());
         model.addAttribute("username",getUsername());
-        return "studentForm";
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        return "studentform";
     }
 
     @PostMapping("/create-student")
@@ -58,7 +65,7 @@ public class TeacherController {
         if (bindingResult.hasErrors()) {
 
             model.addAttribute("studentForm", studentForm);
-            return "studentForm";
+            return "studentform";
         }
 
         Student student = new Student();
@@ -69,12 +76,18 @@ public class TeacherController {
         student.setLastName(studentForm.getLastName());
         student.setPhone(studentForm.getPhone());
         student.setSchoolYear(studentForm.getSchoolYear());
+
         Teacher teacher= new Teacher();
         teacher.setEmail(getUsername());
         student.setTeacher(teacher);
-        teacherService.createStudent(student);
+        Student student1=teacherService.createStudent(student);
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        model.addAttribute("userType",userExtraDTO.getUserType());
+        model.addAttribute("student",student1);
+        model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
 
-        return "/teacherDashboard";
+        return "student";
     }
 
     @GetMapping("/students")
@@ -82,6 +95,9 @@ public class TeacherController {
         List<Student> studentList=teacherService.getStudents();
         model.addAttribute("studentList",studentList);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        model.addAttribute("userType",userExtraDTO.getUserType());
         return "studentlist";
     }
 
@@ -92,6 +108,9 @@ public class TeacherController {
 
         model.addAttribute("student",studentList.get(0));
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        model.addAttribute("userType",userExtraDTO.getUserType());
         return "student";
     }
 
@@ -117,26 +136,29 @@ public class TeacherController {
 
         }
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        model.addAttribute("userType",userExtraDTO.getUserType());
 
         // return "redirect:/student/createteacher";
         return "updateStudent";
     }
 
     @PutMapping ("/updateStudent")
-    public String updateTeacher(@Valid @ModelAttribute("studentForm") StudentForm studentForm, BindingResult bindingResult, Model model, HttpServletRequest request) throws URISyntaxException {
+    public String updateStudent(@Valid @ModelAttribute("studentForm") StudentForm studentForm, BindingResult bindingResult, Model model, HttpServletRequest request) throws URISyntaxException {
 
         log.info("Updating Student {}" ,studentForm.getEmail());
 
         if (bindingResult.hasErrors()) {
 
             model.addAttribute("studentForm", studentForm);
-            return "studentForm";
+            return "studentform";
         }
 
         Student student = new Student();
         student.setId(studentForm.getId());
-        student.setCreatedBy(getUsername());
-        student.setCreated(Instant.now());
+        student.setCreatedBy(studentForm.getCreatedBy());
+        student.setCreated(studentForm.getCreated());
         student.setEmail(studentForm.getEmail());
         student.setFirstName(studentForm.getFirstName());
         student.setLastName(studentForm.getLastName());
@@ -151,11 +173,16 @@ public class TeacherController {
         Student student1= teacherService.updateStudent(student);
         model.addAttribute("student",student1);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
 
         return "student";
     }
 
-
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
+    }
 
     private String getUsername() {
         User user = (User) getAuthentication().getPrincipal();

@@ -68,7 +68,9 @@ public class StudentService {
         requestMap.put("email", teacher.getEmail());
         requestMap.put("phone", teacher.getPhone());
         requestMap.put("createdBy", teacher.getCreatedBy());
-        requestMap.put("createdDate", teacher.getCreated());
+        requestMap.put("created", teacher.getCreated());
+        requestMap.put("updated", Instant.now());
+
         requestMap.put("profileContent", teacher.getProfileContent());
         Student student = teacher.getStudent();
 
@@ -80,6 +82,7 @@ public class StudentService {
         student.setEmail(userExtraDTO.getUserDTO().getEmail());
         requestMap.put("student", student);
         log.info("Details {}", getAuthentication().getDetails());
+        requestMap.put("updatedBy", userExtraDTO.getUserDTO().getEmail());
 
 //        byte[] encodedAuth = Base64.encodeBase64(
 //                auth.getBytes(Charset.forName("US-ASCII")) );

@@ -4,6 +4,7 @@ import com.dd.classdiary.model.*;
 import com.dd.classdiary.service.StudentService;
 import com.dd.classdiary.service.dto.TeacherDTO;
 import com.dd.classdiary.service.dto.UserDTO;
+import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class StudentController {
     public String getClassForm( Model model) {
         model.addAttribute("userForm", new UserForm());
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "addclass";
     }
 
@@ -49,6 +51,7 @@ public class StudentController {
         }
 
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "teacherForm";
     }
 
@@ -57,6 +60,7 @@ public class StudentController {
 
         log.info("Creating Teacher {}" ,teacherForm.getEmail());
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
 
         if (bindingResult.hasErrors()) {
 
@@ -75,9 +79,13 @@ public class StudentController {
         Student student= new Student();
         student.setEmail(getUsername());
         teacher.setStudent(student);
-        studentService.createTeacher(teacher);
+        Teacher teacher1=studentService.createTeacher(teacher);
 
-        return "/dashboard";
+        model.addAttribute("teacher",teacher1);
+        model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+
+        return "teacher";
     }
 
     @PutMapping ("/updateTeacher")
@@ -85,6 +93,7 @@ public class StudentController {
 
         log.info("Updating Teacher {}" ,teacherForm.getEmail());
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
 
         if (bindingResult.hasErrors()) {
 
@@ -118,6 +127,7 @@ public class StudentController {
         List<Teacher> teacherList=studentService.getTeachers();
         model.addAttribute("teacherList",teacherList);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "teacherlist";
     }
 
@@ -128,6 +138,7 @@ public class StudentController {
 
         model.addAttribute("teacher",teacherList.get(0));
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "teacher";
     }
 
@@ -153,6 +164,7 @@ public class StudentController {
 
         }
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
 
        // return "redirect:/student/createteacher";
         return "updateTeacher";
@@ -165,6 +177,7 @@ public class StudentController {
 
         log.info("Creating ClassSchdule for {}" );
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         if (bindingResult.hasErrors()) {
 
             model.addAttribute("classScheduleForm", classScheduleForm);
@@ -183,6 +196,11 @@ public class StudentController {
         return user.getUsername();
     }
 
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
+    }
 
 
     private Authentication getAuthentication() {

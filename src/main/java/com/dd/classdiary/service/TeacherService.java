@@ -57,7 +57,7 @@ public class TeacherService {
         requestMap.put("email", student.getEmail());
         requestMap.put("phone", student.getPhone());
         requestMap.put("createdBy", student.getCreatedBy());
-        requestMap.put("createdDate", student.getCreated());
+        requestMap.put("created", student.getCreated());
         requestMap.put("schoolYear", student.getSchoolYear());
         Teacher teacher = student.getTeacher();
 
@@ -203,10 +203,10 @@ public class TeacherService {
         teacher.setEmail(userExtraDTO.getUserDTO().getEmail());
         teacher.setId(userExtraDTO.getUserId());
         requestMap.put("teacher", teacher);
-        requestMap.put("createdBy", teacher.getCreatedBy());
-        requestMap.put("createdDate", teacher.getCreated());
-        requestMap.put("updatedBy", userExtraDTO.getUserDTO().getEmail());
-        requestMap.put("update", Instant.now());
+        requestMap.put("createdBy", student.getCreatedBy());
+        requestMap.put("created", student.getCreated());
+//        requestMap.put("updatedBy", userExtraDTO.getUserDTO().getEmail());
+        requestMap.put("updated", Instant.now());
 
         headers.set("Authorization", "Bearer " + userExtraDTO.getToken());
 

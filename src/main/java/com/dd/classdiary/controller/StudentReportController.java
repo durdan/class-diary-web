@@ -4,6 +4,8 @@ import com.dd.classdiary.config.ReportType;
 import com.dd.classdiary.model.*;
 import com.dd.classdiary.service.StudentReportService;
 import com.dd.classdiary.service.StudentService;
+import com.dd.classdiary.service.dto.UserDTO;
+import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,7 @@ public class StudentReportController {
         log.info("Report Type {}",report);
        List<StudentReport> studentReports=studentReportService.getTotalClasses(teacherId,report);
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return studentReports;
     }
 
@@ -68,7 +71,11 @@ public class StudentReportController {
         return user.getUsername();
     }
 
-
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
+    }
 
     private Authentication getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

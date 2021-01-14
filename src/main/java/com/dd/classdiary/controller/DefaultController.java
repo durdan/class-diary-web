@@ -1,5 +1,6 @@
 package com.dd.classdiary.controller;
 
+import com.dd.classdiary.service.dto.UserDTO;
 import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ public class DefaultController {
     public String defaultAfterLogin(Model model, HttpServletRequest request) {
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         if (userExtraDTO.getUserType().equalsIgnoreCase("TEACHER")) {
 
             return "redirect:teacherDashboard";
@@ -29,6 +31,12 @@ public class DefaultController {
         return user.getUsername();
     }
 
+
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
+    }
 
 
     private Authentication getAuthentication() {

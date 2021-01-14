@@ -6,6 +6,7 @@ import com.dd.classdiary.service.ClassScheduleService;
 import com.dd.classdiary.service.CourseService;
 import com.dd.classdiary.service.StudentService;
 import com.dd.classdiary.service.TeacherService;
+import com.dd.classdiary.service.dto.UserDTO;
 import com.dd.classdiary.service.dto.UserExtraDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 
 @Controller
@@ -75,7 +77,7 @@ public class CourseScheduleController {
             model.addAttribute("username",getUsername());
             return "classScheduleForm";
         }
-        classScheduleService.createClass(classScheduleForm);
+       ClassSchedule classSchedule= classScheduleService.createClass(classScheduleForm);
 
         if(userExtraDTO.getUserType().equals(UserType.TEACHER.name())){
             List <Student> studentList = teacherService.getStudents();
@@ -83,43 +85,66 @@ public class CourseScheduleController {
         }
         model.addAttribute("userType",userExtraDTO.getUserType());
         model.addAttribute("username",getUsername());
-        return "classScheduleForm";
+        model.addAttribute("classschedule",classSchedule);
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        return "classschedule";
     }
 
     @GetMapping("/get-class-schedules")
-//    public String getClassSchedules( Model model,
-//                                     @RequestParam(value="filterId",required=false) Long filterId,
-//                                     @RequestParam(value="payment",required=false) Boolean payment,
-//                                      @RequestParam(value="confirmed",required=false) Boolean confirmed,
-//                                     @RequestParam(value="rescheduled",required=false) Boolean rescheduled,
-//                                     @RequestParam(value="startDate",required=false) String startDate,
-//                                     @RequestParam(value="endDate",required=false) String endDate
-//                                     ) throws URISyntaxException {
+    public String getClassSchedules( Model model,
+                                     @RequestParam(value="filterId",required=false) Long filterId,
+                                     @RequestParam(value="payment",required=false) String payment,
+                                      @RequestParam(value="confirmed",required=false) String confirmed,
+                                     @RequestParam(value="rescheduled",required=false) String rescheduled,
+                                     @RequestParam(value="startDate",required=false) String startDate,
+                                     @RequestParam(value="endDate",required=false) String endDate
+                                     ) throws URISyntaxException {
 
-    public String getClassSchedukles(Model model,  SearchFilter searchFilter) throws URISyntaxException{
+//    public String getClassSchedules(Model model,  SearchFilter searchFilter) throws URISyntaxException{
 
-        Long filterId=null;
-        Boolean payment=null;
-        Boolean rescheduled=null;
-        Boolean confirmed=null;
-        String startDate=null;
-        String endDate=null;
+//        Long filterId=null;
+        Boolean paymentParam=null;
+        Boolean rescheduledParam=null;
+        Boolean confirmedParam=null;
+
+//        String endDate=null;
+        log.info("search filter raw {} {} {} {} {}  {}",filterId,Boolean.valueOf(payment),rescheduled,confirmed,startDate,endDate);
+        SearchFilter searchFilter = new SearchFilter();
+            if(payment!=null){
+                paymentParam=Boolean.valueOf(payment);
+            }
+            if(rescheduled!=null){
+                rescheduledParam=Boolean.valueOf(rescheduled);
+            }
+            if(confirmed!=null){
+                confirmedParam=Boolean.valueOf(confirmed);
+            }
 
 
-        if(searchFilter==null){
-            model.addAttribute("searchFilter",new SearchFilter());
-        }else{
-            log.info("Search filer is {}",searchFilter);
-            endDate=searchFilter.getEndDate();
-            startDate=searchFilter.getStartDate();
-            payment=searchFilter.isPayment();
-            confirmed=searchFilter.isConfirmed();
-            rescheduled=searchFilter.isRescheduled();
-            filterId=searchFilter.getFilterId();
+            searchFilter.setFilterId(filterId);
+
+            searchFilter.setPayment(Boolean.valueOf(payment));
+            searchFilter.setConfirmed(Boolean.valueOf(confirmed));
+            searchFilter.setRescheduled(Boolean.valueOf(rescheduled));
+            searchFilter.setStartDate(startDate);
+            searchFilter.setEndDate(endDate);
             model.addAttribute("searchFilter",searchFilter);
-        }
 
-        List<ClassSchedule> classScheduleList=classScheduleService.getClassSchedules(filterId,payment,confirmed,rescheduled,startDate,endDate);
+//        if(searchFilter==null){
+//            SearchFilter sf = new SearchFilter();
+//            model.addAttribute("searchFilter",new SearchFilter());
+//        }else{
+//            log.info("Search filer is {}",searchFilter);
+//            endDate=searchFilter.getEndDate();
+//            startDate=searchFilter.getStartDate();
+//            payment=searchFilter.getPayment();
+//            confirmed=searchFilter.getPayment();
+//            rescheduled=searchFilter.getRescheduled();
+//            filterId=searchFilter.getFilterId();
+//            model.addAttribute("searchFilter",searchFilter);
+//        }
+
+        List<ClassSchedule> classScheduleList=classScheduleService.getClassSchedules(filterId,paymentParam,confirmedParam,rescheduledParam,startDate,endDate);
         model.addAttribute("classScheduleList",classScheduleList);
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
         if(userExtraDTO.getUserType().equals(UserType.STUDENT.name())){
@@ -134,6 +159,7 @@ public class CourseScheduleController {
         }
         model.addAttribute("userType",userExtraDTO.getUserType());
         model.addAttribute("username",getUsername());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "classschedulelist";
     }
 
@@ -146,6 +172,7 @@ public class CourseScheduleController {
         model.addAttribute("username",getUsername());
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
         model.addAttribute("userType",userExtraDTO.getUserType());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "classschedule";
     }
 
@@ -164,12 +191,20 @@ public class CourseScheduleController {
         classScheduleForm.setConfirmedByTeacher(classSchedule.getConfirmedByTeacher());
         classScheduleForm.setConfirmed(classSchedule.getConfirmed());
         classScheduleForm.setRescheduled(classSchedule.getRescheduled());
+        if(classSchedule.getCreated()==null){
+            classScheduleForm.setCreated(Instant.now().toString());
+        }else {
+            classScheduleForm.setCreated(classSchedule.getCreated().toString());
+        }
+
+        classScheduleForm.setCreatedBy(classSchedule.getCreatedBy());
 
         classScheduleForm.setName(classSchedule.getName());
         classScheduleForm.setPayment(classSchedule.getPayment());
         classScheduleForm.setSchedule(classSchedule.getSchedule().toString());
 //        classScheduleForm.setParentId(classSchedule.getParent().getId());
         model.addAttribute("classScheduleForm",classScheduleForm);
+        model.addAttribute("username",getUsername());
         model.addAttribute("courseList",courseService.getCourses());
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
         if(userExtraDTO.getUserType().equals(UserType.STUDENT.name())){
@@ -182,6 +217,7 @@ public class CourseScheduleController {
             model.addAttribute("studentList",studentList);
         }
         model.addAttribute("userType",userExtraDTO.getUserType());
+        model.addAttribute("loggedinUserName",getLoggedInUser());
         return "updateclassScheduleForm";
     }
 
@@ -191,15 +227,16 @@ public class CourseScheduleController {
         log.info("Controller - Request to update a class Schedule with id{}",classScheduleForm.getId());
         ClassSchedule classSchedule=classScheduleService.updateClass(classScheduleForm);
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
-        if(userExtraDTO.getUserType().equalsIgnoreCase("STUDENT")){
-            model.addAttribute("username",getUsername());
-            return "dashboard";
-        }
-        else
-        {
-            model.addAttribute("username",getUsername());
-            return "teacherDashboard";
-        }
+        model.addAttribute("loggedinUserName",getLoggedInUser());
+        model.addAttribute("classschedule",classSchedule);
+        model.addAttribute("username",getUsername());
+        ///
+
+
+        model.addAttribute("userType",userExtraDTO.getUserType());
+
+        ///
+        return "classschedule";
 
     }
 
@@ -208,7 +245,11 @@ public class CourseScheduleController {
         return user.getUsername();
     }
 
-
+    private String getLoggedInUser() {
+        UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
+        UserDTO  userDTO=userExtraDTO.getUserDTO();
+        return userDTO.getFirstName() + " "+ userDTO.getLastName();
+    }
 
     private Authentication getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

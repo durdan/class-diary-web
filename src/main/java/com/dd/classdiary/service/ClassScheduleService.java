@@ -203,7 +203,7 @@ public class ClassScheduleService {
 
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
         requestMap.put("updatedBy",userExtraDTO.getUserDTO().getEmail());
-        requestMap.put("update",Instant.now());
+        requestMap.put("updated",Instant.now());
 
         if(userExtraDTO.getUserType().equals(UserType.STUDENT.name())){
             Student student = new Student();
@@ -282,7 +282,7 @@ public class ClassScheduleService {
             ZonedDateTime d = ZonedDateTime.parse(startDate);
             params.put("schedule.greaterThanOrEqual",d.toLocalDateTime().toInstant(ZoneOffset.UTC).toString());
         }else{
-            params.put("schedule.greaterThanOrEqual",Instant.now().toString());
+           // params.put("schedule.greaterThanOrEqual",Instant.now().toString());
         }
         if(endDate!=null && !endDate.isBlank() ){
             ZonedDateTime d = ZonedDateTime.parse(endDate);
