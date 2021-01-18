@@ -33,16 +33,16 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="" onload="getDashboard()">
-<div class=""   filter-color="red" >
+<body class="bg-dd " onload="getDashboard()">
+<div class=""   filter-color="black" >
   <div class="wrapper" >
     <div th:insert="~{sidebar.html :: sidebar}"/>
 
-    <div class="main-panel">
+    <div class="main-panel ">
       <!-- Navbar -->
       <div th:insert="~{navbar.html :: navbar}"/>
       <!-- End Navbar -->
-      <div class="content" id="content">
+      <div class="content" id="content" >
         <div class="content" >
           <!--<div class="container-fluid">-->
             <!--<div class="row">-->
@@ -76,7 +76,7 @@ The above copyright notice and this permission notice shall be included in all c
             <!--</div>-->
           <!--</div>-->
           <div class="container-fluid">
-            <h3>Classes at a glance</h3>
+            <h3 class="text-light">Classes at a glance</h3>
             <br>
             <div class="row" >
               <div class="col-lg-12 col-md-12 col-sm-12" id="total-classes-TOTAL">
@@ -102,7 +102,7 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
       </div>
       <!-- End of Main Content -->
-      <div th:insert="~{footer :: content}"  />
+      <div th:insert="~{footer :: content}" style="color: white" />
     </div>
   </div>
 </div>

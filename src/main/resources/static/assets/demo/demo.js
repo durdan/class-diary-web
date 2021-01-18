@@ -714,7 +714,7 @@ demo = {
     } else if (type == 'title-and-text') {
       swal({
         title: "Social Sign-up coming soon..",
-        text: "Please fill the sign-up form ",
+        text: "You can use the registration form to signup ",
         buttonsStyling: false,
         confirmButtonClass: "btn btn-info"
       }).catch(swal.noop)

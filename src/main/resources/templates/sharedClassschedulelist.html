@@ -18,7 +18,7 @@ The above copyright notice and this permission notice shall be included in all c
   <link rel="icon" type="image/png" href="../../assets/img/favicon/favicon.ico">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>
-    Class Planner - Manage Your All Classes in one place
+    Class Planner manage and shared your classes;s schedule
   </title>
   <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <!--     Fonts and icons     -->
@@ -30,29 +30,101 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="off-canvas-sidebar bg-dd text-light">
-  <!-- Navbar -->
-  <!-- End Navbar -->
-  <div class="wrapper wrapper-full-page">
-    <div class="page-header error-page " >
-      <!--   you can change the color of the filter page using: data-color="blue | green | orange | red | purple" -->
-      <div class="content-center">
-        <div class="row">
-          <div class="col-md-12">
-            <h1 class="title">Oooooups</h1>
-            <h2>Something went wrong :-(</h2>
-            <h4>Ooooups! Please try again</h4>
+<body class="bg-dd landing-page off-canvas-sidebar">
+<div th:insert="~{navbar-login-reg.html:: navbar-login-reg}"/>
+<div id="content" class="page-header login-page "   filter-color="black">
+<!-- Navbar -->
+      <!--<div th:insert="~{navbar-login-reg.html:: navbar-login-reg}"/>-->
+      <!-- End Navbar -->
+
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header card-header-primary card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">view_list</i>
+                  </div>
+                  <h4 class="card-title">Class Schedules</h4>
+                </div>
+                <div class="card-body">
+                  <div class="toolbar">
+                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                  </div>
+                  <div class="material-datatables">
+                    <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Teacher</th>
+                          <th>Student</th>
+                          <th>Course</th>
+                          <th>Schedules</th>
+                          <th>Paid</th>
+                          <th>Confirmed</th>
+                          <th>Cancelled</th>
+
+                        </tr>
+                      </thead>
+                      <tfoot>
+                        <tr>
+                          <th>Name</th>
+                          <th>Teacher</th>
+                          <th>Student</th>
+                          <th>Course</th>
+                          <th>Schedules</th>
+                          <th>Paid</th>
+                          <th>Confirmed</th>
+                          <th>Cancelled</th>
+
+                        </tr>
+                      </tfoot>
+                      <tbody>
+                      <tr th:each="classSchedule : ${classScheduleList}">
+                        <td   th:text="${classSchedule.name}"/>
+                        <td  th:text="${#objects.nullSafe(classSchedule?.teacher?.firstName,'')}" />
+                        <td  th:text="${#objects.nullSafe(classSchedule?.student?.firstName,'')}" />
+                        <td   th:text="${classSchedule.course.name}" />
+                        <td   th:text="${classSchedule.schedule}"/>
+
+                        <td th:style="${classSchedule.payment} == FALSE ? 'background: #e91e62' : 'background: #4baf4f'">
+                        <span th:if="${classSchedule.payment}">
+                                         Yes
+                        </span>
+                        <span th:if="${!classSchedule.payment}">
+                                NO
+                         </span>
+                        </td>
+
+                        <td th:style="${classSchedule.confirmed} == FALSE ? 'background: #e91e62' : 'background: #4baf4f'">
+                        <span bgcolor="green" th:if="${classSchedule.confirmed}">Yes</span>
+                          <span th:if="${!classSchedule.confirmed}">NO</span>
+                        </td>
+                        <td  th:style="${classSchedule.rescheduled} == TRUE ? 'background: #e91e62' : 'background: white'">
+                        <span th:if="${classSchedule.rescheduled}">Yes</span>
+                        <span th:if="${!classSchedule.rescheduled}">NO</span>
+
+                        </td>
+
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <!-- end content-->
+              </div>
+              <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
           </div>
+          <!-- end row -->
+
         </div>
-      </div>
-
-
-
-    </div>
-
   </div>
-  <br/><br/><br/><br/><br/><br/>
-  <div th:insert="~{footer :: content}" style="color:white" />
+<br/><br/><br/><br/>
+<div th:insert="~{footer :: content}" style="color: white" />
+
+
   <!--   Core JS Files   -->
   <script src="../../assets/js/core/jquery.min.js"></script>
   <script src="../../assets/js/core/popper.min.js"></script>
@@ -96,6 +168,10 @@ The above copyright notice and this permission notice shall be included in all c
   <script src="../../assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
   <script src="../../assets/demo/demo.js"></script>
+  <script src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"/>
+  <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.flash.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
   <script>
     $(document).ready(function() {
       $().ready(function() {
@@ -269,8 +345,77 @@ The above copyright notice and this permission notice shall be included in all c
   </script>
   <script>
     $(document).ready(function() {
-      md.checkFullPageBackgroundImage();
+
+
+       // var message =/*[[${userType}]]*/ 'defaultanyvalue';
+        var message = "[[${loggedinUserName}]]" + " on " + new Date();
+        console.log(message);
+
+
+      $('#datatables').DataTable({
+        "pagingType": "full_numbers",
+        "lengthMenu": [
+          [10, 25, 50, -1],
+          [10, 25, 50, "All"]
+        ],dom: 'Bfrtip',
+          buttons: [
+              {
+                  extend: 'pdf',
+                  text: 'Export PDF',
+                  title: " ClassSchedule ",
+                  messageTop: " Manage your Classes with www.classplanner.co.uk ",
+                  messageBottom: "Report By "+message,
+                  className: 'btn btn-info btn-sm',
+                  exportOptions: {
+                      columns: [ 0, 1, 2, 3,4,5,6,7 ]
+                  },
+
+
+              },
+              {
+                  extend: 'copy',
+                  text: 'Copy',
+                  className: 'btn btn-rose btn-sm',exportOptions: {
+                      columns: [0, 1, 2, 3,4,5,6,7  ]
+                  }}
+          ],
+        responsive: true,
+        language: {
+          search: "_INPUT_",
+          searchPlaceholder: "Search records",
+        }
+      });
+
+      var table = $('#datatable').DataTable();
+
+      // Edit record
+      table.on('click', '.edit', function() {
+        $tr = $(this).closest('tr');
+        var data = table.row($tr).data();
+        alert('You press on Row: ' + data[0] + ' ' + data[1] + ' ' + data[2] + '\'s row.');
+      });
+
+      // Delete a record
+      table.on('click', '.remove', function(e) {
+        $tr = $(this).closest('tr');
+        table.row($tr).remove().draw();
+        e.preventDefault();
+      });
+
+      //Like record
+      table.on('click', '.like', function() {
+        alert('You clicked on Like button');
+      });
     });
+  </script>
+  <script>
+      $(document).ready(function() {
+          // initialise Datetimepicker and Sliders
+          md.initFormExtendedDatetimepickers();
+          if ($('.slider').length != 0) {
+              md.initSliders();
+          }
+      });
   </script>
 </body>
 

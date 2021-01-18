@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URISyntaxException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -48,7 +49,7 @@ public class ClassScheduleService {
     String pattern = "hh:mm:ss a";
     DateFormat dateFormat = new SimpleDateFormat(pattern1);
     SimpleDateFormat sdf1 = new SimpleDateFormat(pattern1);
-    String pattern2 = "yyyy-MM-dd hh:mm:ss";
+    String pattern2 = "yyyy-MM-dd hh:mm";
     SimpleDateFormat sdf2 = new SimpleDateFormat(pattern2);
     String pattern3 = "yyyy-MM-dd";
     SimpleDateFormat sdf3 = new SimpleDateFormat(pattern3);
@@ -90,16 +91,26 @@ public class ClassScheduleService {
       //  OffsetDateTime odtInstanceAtOffset = OffsetDateTime.parse(classScheduleForm.getSchedule(), formatter);
 //      LocalDateTime dateTime = LocalDateTime.parse(classScheduleForm.getSchedule(), dtf);
 
+        SimpleDateFormat fallback = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        fallback.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
 
-        log.info("Schedule date is : {}",classScheduleForm.getSchedule());
+            log.info("Schedule date is : {}",fallback.parse(classScheduleForm.getSchedule()));
+            requestMap.put("schedule", fallback.parse(classScheduleForm.getSchedule()));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
 
 
         //LocalDate localDate=LocalDate.parse(classScheduleForm.getSchedule(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS").withZone(UTC));
 
-        ZonedDateTime d = ZonedDateTime.parse(classScheduleForm.getSchedule());
-        getWeeklyMeetingDates(d.toLocalDate(),5);
+//        ZonedDateTime d = ZonedDateTime.parse(classScheduleForm.getSchedule());
+//        getWeeklyMeetingDates(d.toLocalDate(),5);
 
-        requestMap.put("schedule", classScheduleForm.getSchedule());
 
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
 
@@ -191,15 +202,17 @@ public class ClassScheduleService {
 //      LocalDateTime dateTime = LocalDateTime.parse(classScheduleForm.getSchedule(), dtf);
 
 
-        log.info("Schedule date is : {}",classScheduleForm.getSchedule());
+        SimpleDateFormat fallback = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        fallback.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
 
+            log.info("Schedule date is : {}",fallback.parse(classScheduleForm.getSchedule()));
+            requestMap.put("schedule", fallback.parse(classScheduleForm.getSchedule()));
 
-        //LocalDate localDate=LocalDate.parse(classScheduleForm.getSchedule(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS").withZone(UTC));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        ZonedDateTime d = ZonedDateTime.parse(classScheduleForm.getSchedule());
-        getWeeklyMeetingDates(d.toLocalDate(),5);
-
-        requestMap.put("schedule", classScheduleForm.getSchedule());
 
         UserExtraDTO userExtraDTO = (UserExtraDTO) getAuthentication().getDetails();
         requestMap.put("updatedBy",userExtraDTO.getUserDTO().getEmail());

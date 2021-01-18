@@ -79,14 +79,22 @@ public class CourseScheduleController {
         }
        ClassSchedule classSchedule= classScheduleService.createClass(classScheduleForm);
 
-        if(userExtraDTO.getUserType().equals(UserType.TEACHER.name())){
-            List <Student> studentList = teacherService.getStudents();
-            model.addAttribute("studentList",studentList);
-        }
+//        if(userExtraDTO.getUserType().equals(UserType.TEACHER.name())){
+//            List <Student> studentList = teacherService.getStudents();
+//            model.addAttribute("studentList",studentList);
+//        }
+//        if(userExtraDTO.getUserType().equals(UserType.STUDENT.name())){
+//
+//            List <Teacher> teacherList = studentService.getTeachers();
+//            model.addAttribute("teacherList",teacherList);
+//
+//        }
+
         model.addAttribute("userType",userExtraDTO.getUserType());
         model.addAttribute("username",getUsername());
         model.addAttribute("classschedule",classSchedule);
         model.addAttribute("loggedinUserName",getLoggedInUser());
+
         return "classschedule";
     }
 

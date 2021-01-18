@@ -33,7 +33,7 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="" onload="getDashboard()">
+<body class="bg-dd" onload="getDashboard()">
   <div class="wrapper ">
     <div th:insert="~{sidebarTeacher.html :: sidebar}"/>
 
@@ -41,7 +41,7 @@ The above copyright notice and this permission notice shall be included in all c
       <!-- Navbar -->
       <div th:insert="~{navbar.html :: navbar}"/>
       <!-- End Navbar -->
-      <div class="content" id="content">
+      <div class="content text-light" id="content">
         <div class="content">
           <h3>Classes at a glance</h3>
 
@@ -102,7 +102,7 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
       </div>
       <!-- End of Main Content -->
-      <div th:insert="~{footer :: content}"  />
+      <div th:insert="~{footer :: content}" style="color: white" />
     </div>
   </div>
   <!--<div class="fixed-plugin">-->

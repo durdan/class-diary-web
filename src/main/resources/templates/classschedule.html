@@ -30,7 +30,7 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="">
+<body class="bg-dd">
   <div class="wrapper">
     <div th:switch="${userType}">
       <div th:case="'STUDENT'" th:insert="~{sidebar.html :: sidebar}"/>
@@ -108,7 +108,7 @@ The above copyright notice and this permission notice shall be included in all c
       </div>
       <!-- End of Main Content -->
 
-      <div  th:insert="~{footer :: content}" />
+      <div  th:insert="~{footer :: content}" style="color: white" />
     </div>
 
 

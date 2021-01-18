@@ -30,80 +30,227 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="bg-dd text-light">
+<body class="bg-dd">
   <div class="wrapper ">
-    <div th:insert="~{sidebarTeacher.html :: sidebar}"/>
+    <div th:switch="${userType}">
+      <div th:case="'STUDENT'" th:insert="~{sidebar.html :: sidebar}"/>
+      <div th:case="'TEACHER'" th:insert="~{sidebarTeacher.html :: sidebar}"/>
+    </div>
     <div class="main-panel">
       <!-- Navbar -->
+
       <div th:insert="~{navbar.html :: navbar}"/>
+
+
       <!-- End Navbar -->
       <div class="content" id="content">
         <div class="container-fluid" style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
           <div class="row">
 
-          </div>
-          <div class="row">
+              <!--<h2  th:if="${shared}" class="subTitle">Information is being shared</h2>-->
+              <div th:if="${shared}" class="col-md-12">
+                <div class="card">
+                  <div class="card-header card-header-icon card-header-success">
+                    <div class="card-icon">
+                      <i class="material-icons">check</i>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="subTitle">Information is being shared by email, but you can copy the URL to share it.  </h5>
+                    <input id="sharedUrl" th:value="@{'https://www.classplanner.co.uk/getSharedInfo/' + ${sharedKey}}"/>
+
+                    <button class="btn btn-success pull-center" onclick="copyUrl()">Copy url</button>
+                    <a href="/" class="btn btn-success pull-center">Go Back</a>
+
+                    <div class="clearfix"></div>
+                  </div>
+                </div>
+              </div>
+
+          <div th:if="${!shared}" class="row col-md-12">
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header card-header-icon card-header-rose">
                   <div class="card-icon">
-                    <i class="material-icons">perm_identity</i>
+                    <i class="material-icons">date_range</i>
                   </div>
-                  <h4 class="card-title">Add Student -
-                    <small class="category">Complete Student profile</small>
+                  <h4 class="card-title">
+                    <div th:switch="${userType}">
+                      <div th:case="'STUDENT'"><span>Please select a teacher to share your class schedule.</span></div>
+                    <div th:case="'TEACHER'" ><span>Please select a student to share your class schedule.</span></div>
+                  </div>
+                    <small class="category"></small>
                   </h4>
                 </div>
                 <div class="card-body">
-                  <form class="form"  action="#"  th:action="@{/teacher/create-student}" th:object="${studentForm}" method="post" >
+                  <form class="form"  action="#"  th:action="@{/shared}" th:object="${sharedRequestForm}" method="post" >
                     <div class="row">
-                      <div class="col-md-6">
+
+                      <div th:if="${not #lists.isEmpty(teacherList)}"  class="col-md-12 ">
                         <div class="form-group">
-                          <label class="bmd-label-floating">First Name</label>
-                          <input type="text" th:field="*{firstName}" th:value="${firstName}" class="form-control">
+                            <select class="selectpicker" data-style="select-with-transition"  title="Choose Teacher"  th:field="*{sharedUserId}"  id="dropOperator">
+                              <option value="0">Choose Teacher</option>
+                              <option th:each="teacher : ${teacherList}" th:value="${teacher.id}" th:text="${teacher.email}"></option>
+                            </select>
                         </div>
+
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Last Name</label>
-                          <input type="text" th:field="*{lastName}"  class="form-control">
-                        </div>
+
+                        <div th:if="${not #lists.isEmpty(studentList)}" class="col-md-12 ">
+                          <div class="form-group">
+                            <select class="selectpicker" data-style="select-with-transition"  title="Choose Student"  th:field="*{sharedUserId}" id="dropOperator2">
+                              <option value="0">Choose Student</option>
+                              <option th:each="student : ${studentList}" th:value="${student.id}" th:text="${student.firstName}"></option>
+                            </select>
+                          </div>
+
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Email Address</label>
-                          <input type="email" th:field="*{email}"  class="form-control">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">phone Number</label>
-                          <input type="text" th:field="*{phone}"  class="form-control">
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">School Year</label>
-                          <input type="text" th:field="*{schoolYear}"  class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-rose pull-right">Create Student</button>
+                    <!--<div class="row">-->
+                      <!--<div class="col-md-6">-->
+                        <!--<div class="form-group">-->
+                          <!--<label class="bmd-label-floating">Please enter a valid email address if you wish to share with anyone</label>-->
+
+                          <!--<input type="email" th:field="*{email}"  class="form-control">-->
+                        <!--</div>-->
+                      <!--</div>-->
+
+                    <!--</div>-->
+                    <button type="submit" class="btn btn-rose pull-right">shared</button>
                     <div class="clearfix"></div>
+
                   </form>
                 </div>
               </div>
             </div>
-
+            <!--<div class="col-md-4">-->
+              <!--<div class="card card-profile">-->
+                <!--<div class="card-avatar">-->
+                  <!--<a href="#pablo">-->
+                    <!--<img class="img" src="../../assets/img/faces/marc.jpg" />-->
+                  <!--</a>-->
+                <!--</div>-->
+                <!--<div class="card-body">-->
+                  <!--<h6 class="card-category text-gray">CEO / Co-Founder</h6>-->
+                  <!--<h4 class="card-title">Alec Thompson</h4>-->
+                  <!--<p class="card-description">-->
+                    <!--Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...-->
+                  <!--</p>-->
+                  <!--<a href="#pablo" class="btn btn-rose btn-round">Follow</a>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
           </div>
         </div>
       </div>
       <!-- End of Main Content -->
-      <div th:insert="~{footer :: content}" />
-    </div>
-  </div>
 
+    </div>
+      <div th:insert="~{footer :: content}" style="color: white"/>
+  </div>
+  </div>
+  <!--<div class="fixed-plugin">-->
+    <!--<div class="dropdown show-dropdown">-->
+      <!--<a href="#" data-toggle="dropdown">-->
+        <!--<i class="fa fa-cog fa-2x"> </i>-->
+      <!--</a>-->
+      <!--<ul class="dropdown-menu">-->
+        <!--<li class="header-title"> Sidebar Filters</li>-->
+        <!--<li class="adjustments-line">-->
+          <!--<a href="javascript:void(0)" class="switch-trigger active-color">-->
+            <!--<div class="badge-colors ml-auto mr-auto">-->
+              <!--<span class="badge filter badge-purple" data-color="purple"></span>-->
+              <!--<span class="badge filter badge-azure" data-color="azure"></span>-->
+              <!--<span class="badge filter badge-green" data-color="green"></span>-->
+              <!--<span class="badge filter badge-warning" data-color="orange"></span>-->
+              <!--<span class="badge filter badge-danger" data-color="danger"></span>-->
+              <!--<span class="badge filter badge-rose active" data-color="rose"></span>-->
+            <!--</div>-->
+            <!--<div class="clearfix"></div>-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li class="header-title">Sidebar Background</li>-->
+        <!--<li class="adjustments-line">-->
+          <!--<a href="javascript:void(0)" class="switch-trigger background-color">-->
+            <!--<div class="ml-auto mr-auto">-->
+              <!--<span class="badge filter badge-black active" data-background-color="black"></span>-->
+              <!--<span class="badge filter badge-white" data-background-color="white"></span>-->
+              <!--<span class="badge filter badge-red" data-background-color="red"></span>-->
+            <!--</div>-->
+            <!--<div class="clearfix"></div>-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li class="adjustments-line">-->
+          <!--<a href="javascript:void(0)" class="switch-trigger">-->
+            <!--<p>Sidebar Mini</p>-->
+            <!--<label class="ml-auto">-->
+              <!--<div class="togglebutton switch-sidebar-mini">-->
+                <!--<label>-->
+                  <!--<input type="checkbox">-->
+                  <!--<span class="toggle"></span>-->
+                <!--</label>-->
+              <!--</div>-->
+            <!--</label>-->
+            <!--<div class="clearfix"></div>-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li class="adjustments-line">-->
+          <!--<a href="javascript:void(0)" class="switch-trigger">-->
+            <!--<p>Sidebar Images</p>-->
+            <!--<label class="switch-mini ml-auto">-->
+              <!--<div class="togglebutton switch-sidebar-image">-->
+                <!--<label>-->
+                  <!--<input type="checkbox" checked="">-->
+                  <!--<span class="toggle"></span>-->
+                <!--</label>-->
+              <!--</div>-->
+            <!--</label>-->
+            <!--<div class="clearfix"></div>-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li class="header-title">Images</li>-->
+        <!--<li class="active">-->
+          <!--<a class="img-holder switch-trigger" href="javascript:void(0)">-->
+            <!--<img src="../../assets/img/sidebar-1.jpg" alt="">-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a class="img-holder switch-trigger" href="javascript:void(0)">-->
+            <!--<img src="../../assets/img/sidebar-2.jpg" alt="">-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a class="img-holder switch-trigger" href="javascript:void(0)">-->
+            <!--<img src="../../assets/img/sidebar-3.jpg" alt="">-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a class="img-holder switch-trigger" href="javascript:void(0)">-->
+            <!--<img src="../../assets/img/sidebar-4.jpg" alt="">-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li class="button-container">-->
+          <!--<a href="https://www.creative-tim.com/product/material-dashboard-pro" target="_blank" class="btn btn-rose btn-block btn-fill">Buy Now</a>-->
+          <!--<a href="https://demos.creative-tim.com/material-dashboard-pro/docs/2.1/getting-started/introduction.html" target="_blank" class="btn btn-default btn-block">-->
+            <!--Documentation-->
+          <!--</a>-->
+          <!--<a href="https://www.creative-tim.com/product/material-dashboard" target="_blank" class="btn btn-info btn-block">-->
+            <!--Get Free Demo!-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li class="button-container github-star">-->
+          <!--<a class="github-button" href="https://github.com/creativetimofficial/ct-material-dashboard-pro" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star ntkme/github-buttons on GitHub">Star</a>-->
+        <!--</li>-->
+        <!--<li class="header-title">Thank you for 95 shares!</li>-->
+        <!--<li class="button-container text-center">-->
+          <!--<button id="twitter" class="btn btn-round btn-twitter"><i class="fa fa-twitter"></i> &middot; 45</button>-->
+          <!--<button id="facebook" class="btn btn-round btn-facebook"><i class="fa fa-facebook-f"></i> &middot; 50</button>-->
+          <!--<br>-->
+          <!--<br>-->
+        <!--</li>-->
+      <!--</ul>-->
+    <!--</div>-->
+  <!--</div>-->
   <!--   Core JS Files   -->
   <script src="../../assets/js/core/jquery.min.js"></script>
   <script src="../../assets/js/core/popper.min.js"></script>
@@ -147,6 +294,15 @@ The above copyright notice and this permission notice shall be included in all c
   <script src="../../assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
   <script src="../../assets/demo/demo.js"></script>
+  <script>
+      $(document).ready(function() {
+          // initialise Datetimepicker and Sliders
+          md.initFormExtendedDatetimepickers();
+          if ($('.slider').length != 0) {
+              md.initSliders();
+          }
+      });
+  </script>
   <script>
     $(document).ready(function() {
       $().ready(function() {
@@ -322,6 +478,37 @@ The above copyright notice and this permission notice shall be included in all c
     $(document).ready(function() {
       md.checkFullPageBackgroundImage();
     });
+    function getReoccurringType(){
+
+        var select = document.querySelector('input[name="reoccurringType"]:checked').value;
+
+        if(select == 1 ) {
+            console.log("1"+document.querySelector("[name=reoccurringType]:checked").value)
+            //document.getElementById("reoccurringType").value = "WEEKLY";
+
+        }
+        if(select == 2 )
+        {
+            console.log("1"+document.querySelector("[name=reoccurringType]:checked").value)
+            //document.getElementById("reoccurringType").value = "BI-WEEKLY";
+
+
+
+        }
+
+
+    }
+  </script>
+  <script>
+      function copyUrl() {
+
+          var copyText = document.getElementById("sharedUrl");
+          copyText.select();
+          copyText.setSelectionRange(0, 99999)
+          document.execCommand("copy");
+          //alert("Copied the text: " + copyText.value);
+      }
+
   </script>
 </body>
 

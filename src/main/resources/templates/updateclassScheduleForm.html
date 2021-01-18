@@ -30,7 +30,7 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="">
+<body class="bg-dd">
   <div class="wrapper ">
     <div th:switch="${userType}">
       <div th:case="'STUDENT'" th:insert="~{sidebar.html :: sidebar}"/>
@@ -81,15 +81,15 @@ The above copyright notice and this permission notice shall be included in all c
                       </div>
                     </div>
                     <div class="row">
-                      <div th:if="${not #lists.isEmpty(teacherList)}">
-                      <div class="col-md-4">
+                      <div class="col-md-4" th:if="${not #lists.isEmpty(teacherList)}">
+
                         <div class="form-group">
                             <select class="selectpicker" data-style="select-with-transition"  title="Choose Teacher"  th:field="*{teacherId}"  id="dropOperator">
                               <!--<option value="0">Choose Teacher</option>-->
                               <option th:each="teacher : ${teacherList}" th:value="${teacher.id}" th:text="${teacher.email}"></option>
                             </select>
                         </div>
-                      </div>
+
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
@@ -99,8 +99,8 @@ The above copyright notice and this permission notice shall be included in all c
                           </select>
                         </div>
                       </div>
-                      <div th:if="${not #lists.isEmpty(studentList)}">
-                        <div class="col-md-4 ">
+                      <div class="col-md-4 " th:if="${not #lists.isEmpty(studentList)}">
+
 
                           <div class="form-group">
                             <select class="selectpicker" data-style="select-with-transition"  title="Choose Student"  th:field="*{studentId}" >
@@ -111,7 +111,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                             </select>
                           </div>
-                        </div>
+
                       </div>
                     </div>
                       <div class="form-check">
@@ -172,7 +172,7 @@ The above copyright notice and this permission notice shall be included in all c
     </div>
 
   </div>
-  <div th:insert="~{footer :: content}" />
+  <div th:insert="~{footer :: content}" style="color: white" />
   <!--<div class="fixed-plugin">-->
     <!--<div class="dropdown show-dropdown">-->
       <!--<a href="#" data-toggle="dropdown">-->

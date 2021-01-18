@@ -30,7 +30,7 @@ The above copyright notice and this permission notice shall be included in all c
   <link href="../../assets/demo/demo.css" rel="stylesheet" />
 </head>
 
-<body class="">
+<body class="bg-dd">
   <div class="wrapper ">
     <div th:insert="~{sidebar.html :: sidebar}"/>
     <div class="main-panel">
@@ -61,6 +61,8 @@ The above copyright notice and this permission notice shall be included in all c
                           <label class="bmd-label-floating">First Name</label>
                           <input type="text" th:field="*{firstName}" th:value="${firstName}" class="form-control">
                           <input type="text" th:hidden="true"  th:field="*{id}" th:value="${id}" class="form-control">
+                          <input type="text" th:hidden="true"  th:field="*{created}" th:value="${created}" class="form-control">
+                          <input type="text" th:hidden="true"  th:field="*{createdBy}" th:value="${createdBy}" class="form-control">
                           <input type="text" th:hidden="true" th:field="*{studentId}" th:value="${studentId}" class="form-control">
                         </div>
                       </div>
@@ -118,7 +120,8 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
       </div>
       <!-- End of Main Content -->
-      <div th:insert="~{footer :: content}" />
+      <br/><br/>
+      <div th:insert="~{footer :: content}" style="color: white" />
     </div>
   </div>
   <!--<div class="fixed-plugin">-->

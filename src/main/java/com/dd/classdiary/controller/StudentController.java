@@ -103,8 +103,8 @@ public class StudentController {
 
         Teacher teacher = new Teacher();
         teacher.setId(teacherForm.getId());
-        teacher.setCreatedBy(getUsername());
-        teacher.setCreated(Instant.now());
+        teacher.setCreatedBy(teacherForm.getCreatedBy());
+        teacher.setCreated(teacherForm.getCreated());
         teacher.setEmail(teacherForm.getEmail());
         teacher.setFirstName(teacherForm.getFirstName());
         teacher.setLastName(teacherForm.getLastName());

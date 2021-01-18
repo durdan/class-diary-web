@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="mainStyle.css">
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+    <title>Worksheet - Highest common factors</title><meta name='description' content='An interactive maths worksheet to practice Highest common factors. Randomly generated and self marking.'>
+    <script type='text/javascript' src='../../assets/js/math/getHCF.js'></script>
+    <script type='text/javascript'>
+
+    function showTotal() {
+        document.getElementById('total').innerHTML = "Total = " + score + " / 10";
+    }
+    function clearTotal() {
+        document.getElementById('total').innerHTML = "Total = ? / 10";
+        document.getElementById('0').focus();
+    }
+    function e() {
+        var e = score;
+        e += 1000;
+        e *= 500;
+        document.getElementById('score').value = e;
+    }
+    function dropBonus() {
+        if (document.getElementById('bonus').value == 1) {
+            document.getElementById('bonus').value = 0;
+            if (document.getElementById('bonusStatus') != null) {
+                document.getElementById('bonusStatus').innerHTML = "Bonus points lost for this worksheet!";
+            }
+            markAnswers();
+            showTotal();
+        } else {
+            markAnswers();
+            showTotal();
+        }
+    }
+    function resetBonus() {
+        document.getElementById('bonus').value = 1;
+        if (document.getElementById('bonusStatus') != null) {
+            document.getElementById('bonusStatus').innerHTML = "Score full marks without checking and earn 5 bonus StudyPoints!";
+        }
+    }
+    function lockSheet() {
+        if (confirm('Are you SURE you wish reveal the answers?')) {
+            showAnswers();
+            showTotal();
+        }
+    }
+    function newWorksheet() {
+        if (confirm('Are you SURE you wish to create a new worksheet?')) {
+            newSheet();
+            clearTotal();
+            resetBonus();
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+        }
+    }
+</script>
+
+</head>
+<body onload="newSheet();
+            clearTotal();
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub]);">
+<div class='header'>
+    <div class='title'>
+        <h1><a href='/'>www.classplanner.co.uk</a></h1>
+        <h2>GCSE maths revision</h2>
+    </div>
+<div class="content">
+    <div class="workout">
+        <h2>Worksheet - Highest common factors</h2>                <p>Find the highest common factor of the following pairs of numbers.</p>                                <div id="questions"></div>
+        <div>
+            <h3 id="total"></h3>
+            <form action='scripts/submitWorkout.php' method='post'>
+                <input name="score" id="score" type="hidden">
+                <input name="bonus" value="1" id="bonus" type="hidden">
+                <input value="New Worksheet" onclick="newWorksheet();" type="button">
+                <input value="Check Answers" onclick="dropBonus();" type="button">
+                <input value="Show Answers" onclick="lockSheet();" type="button">
+                <p>Sign in or <a href='register.php'>register</a> to record your scores and collect StudyPoints!</p>                    </form>
+        </div>
+    </div>
+
+</div>
+ <!--
+  footer will go here
+  -->
+</div>
+     </body>
+</html>
