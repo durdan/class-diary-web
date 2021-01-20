@@ -31,9 +31,9 @@ public class WelcomeController {
             model.addAttribute("username",getUsername());
             if (userExtraDTO.getUserType().equalsIgnoreCase("TEACHER")) {
 
-                return "redirect:teacherDashboard";
+                return "teacher-landing";
             }
-            return "redirect:dashboard";
+            return "student-landing";
         }
         return "index";
 

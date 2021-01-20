@@ -35,9 +35,9 @@ public class LoginController {
             model.addAttribute("username",getUsername());
             if (userExtraDTO.getUserType().equalsIgnoreCase("TEACHER")) {
 
-                return "teacherDashboard";
+                return "teacher-landing";
             }
-            return "dashboard";
+            return "/student-landing";
         }
 
         return "login";
